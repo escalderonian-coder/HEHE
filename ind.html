@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHICK IT! Egg Freshness Index Calculator & Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for aesthetic enhancements */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background-color: #f7fafc; /* Simple light background */
+            display: block; 
+            padding: 1.5rem; /* Add padding to the body */
+        }
+        /* Montserrat Font for Headings */
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700; /* Bold */
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.95); 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            backdrop-filter: blur(2px);
+            position: relative;
+        }
+        .card-guide {
+            background-color: #ffffff;
+            border-left: 4px solid #4f46e5;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-box {
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .logo-image {
+            max-width: 200px;
+            height: auto;
+            margin: 0 auto 1.5rem;
+            display: block;
+        }
+        .info-button {
+            color: #4f46e5;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0 4px;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .info-panel {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background-color: #eff6ff; /* blue-50 */
+            border-left: 3px solid #3b82f6; /* blue-500 */
+            color: #1e40af; /* blue-900 */
+            font-size: 0.875rem;
+            border-radius: 0.25rem;
+        }
+
+        /* --- STYLES FOR SCROLLING AND LAYOUT (MD breakpoint and up) --- */
+        @media (min-width: 768px) {
+            .scroll-container-md {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                height: calc(100vh - 3rem); 
+                max-width: 1280px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .left-column-scroll {
+                position: sticky;
+                top: 0;
+                overflow-y: auto;
+                padding-right: 1rem;
+            }
+
+            .right-column-scroll {
+                overflow-y: auto;
+                padding-left: 1rem;
+            }
+        }
+        /* Hide scrollbars on columns (optional, for cleaner UX) */
+        .left-column-scroll::-webkit-scrollbar,
+        .right-column-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .left-column-scroll,
+        .right-column-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* --- END STYLES --- */
+    </style>
+</head>
+<body class=""> 
+
+    <div class="w-full max-w-7xl mx-auto scroll-container-md md:grid md:gap-8 lg:gap-12">
+
+        <div class="mb-8 md:mb-0 left-column-scroll">
+            
+            <div class="card w-full p-6 md:p-10 rounded-xl border border-gray-200">
+                
+                <img src="https://media.discordapp.net/attachments/1439445774172815494/1439447528780206152/logo.png?ex=691a8d7a&is=69193bfa&hm=34b63f8114f9b4193057a2fc10e6bc00570f96af6b059e8421839ce598658625" 
+                    alt="CHICK IT! Logo" 
+                    class="logo-image">
+
+                <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-2">
+                    CHICK IT! Egg Freshness Index (FI) Calculator
+                </h1>
+                <p class="text-center text-sm text-gray-500 mb-8">
+                    Calculates freshness based on Weight, Floating Score, and Candling Score.
+                </p>
+
+                <div class="bg-indigo-50 p-4 rounded-lg mb-6 text-center">
+                    <p class="text-xl font-bold text-indigo-700">
+                        Formula: FI = W – 12.03F – 8.42C
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    
+                    <div>
+                        <label for="weight" class="text-sm font-medium text-gray-700 mb-1 flex justify-between items-center">
+                            <span>
+                                1. Weight (W) in grams:
+                                <button type="button" class="info-button" onclick="toggleInfo('info-weight')">i</button>
+                            </span>
+                            <span class="text-xs text-gray-400">e.g., 55.0</span>
+                        </label>
+                        <div id="info-weight" class="info-panel hidden">
+                            <strong>Weight (W):</strong> This refers to the total mass of the egg in grams. It is a critical factor because an egg loses weight as moisture evaporates through the shell over time. Freshness is inversely proportional to weight loss.
+                        </div>
+                        <input type="number" id="weight" step="0.01" placeholder="e.g., 55.0"
+                                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" required>
+                    </div>
+
+                    <div>
+                        <label for="floatingScore" class="text-sm font-medium text-gray-700 mb-1 flex justify-between items-center">
+                            <span>
+                                2. Floating Score (F):
+                                <button type="button" class="info-button" onclick="toggleInfo('info-floating')">i</button>
+                            </span>
+                            <span class="text-xs text-gray-400">Enter 0, 1, or 2</span>
+                        </label>
+                        <div id="info-floating" class="info-panel hidden">
+                            <strong>Floating Score (F):</strong> This score is derived from the Float Test. A score of 0 means the egg lies flat (freshest); 1 means it stands upright; and 2 means it floats (least fresh). Only whole integers (0, 1, 2) should be used.
+                        </div>
+                        <input type="number" id="floatingScore" min="0" max="2" placeholder="Enter 0, 1, or 2"
+                                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" required>
+                    </div>
+
+                    <div>
+                        <label for="candlingScore" class="text-sm font-medium text-gray-700 mb-1 flex justify-between items-center">
+                            <span>
+                                3. Candling Score (C):
+                                <button type="button" class="info-button" onclick="toggleInfo('info-candling')">i</button>
+                            </span>
+                            <span class="text-xs text-gray-400">Enter 0, 1, or 2</span>
+                        </label>
+                        <div id="info-candling" class="info-panel hidden">
+                            <strong>Candling Score (C):</strong> This score is derived from the Candling Test. It measures the visibility and movement of the yolk and the size of the air cell. A score of 0 indicates a small air cell and central yolk (freshest); 1 is medium; and 2 is a large air cell and mobile yolk (least fresh). Only whole integers (0, 1, 2) should be used.
+                        </div>
+                        <input type="number" id="candlingScore" min="0" max="2" placeholder="Enter 0, 1, or 2"
+                                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" required>
+                    </div>
+
+                </div>
+
+                <button id="calculateBtn" 
+                        class="w-full mt-8 bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150 ease-in-out transform hover:scale-[1.01] active:scale-[0.99]">
+                    Calculate Freshness Index
+                </button>
+
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">
+                        Calculation Result
+                    </h2>
+
+                    <div id="resultOutput" class="result-box bg-gray-50 border border-gray-300 rounded-lg p-4 text-center">
+                        <p class="text-gray-500 text-sm" id="placeholder">Enter values above and click 'Calculate'.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+                <h2 class="text-2xl font-extrabold text-gray-800 mb-4 text-center flex items-center justify-center">
+                    <span class="text-indigo-600 mr-2">🔬</span> About This Project
+                </h2>
+                <p class="text-sm text-gray-600 text-center mb-4">
+                    CHICK IT! is a research project developed by students of <strong>STEM-12 Bixby</strong> to provide a simple, scientific method for assessing egg quality using observable parameters (Weight, Float Test, and Candling).
+                </p>
+
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <h3 class="font-bold text-center text-indigo-700 mb-3">Researchers and Developers</h3>
+                    <ul class="text-sm text-gray-700 space-y-1 text-center font-medium">
+                        <li><span class="text-gray-500">Lead Researcher & Web Developer:</span> <strong>Ian H. Escalderon</strong></li>
+                        <li><span class="text-gray-500">Researcher:</span> <strong>Louie Rafaell E. Trinchera</strong></li>
+                        <li><span class="text-gray-500">Researcher:</span> <strong>Prince Ezekiel G. Panlaque</strong></li>
+                    </ul>
+                </div>
+            </div>
+            </div>
+
+        <div class="space-y-8 right-column-scroll">
+            
+            <div class="card card-guide w-full p-6 rounded-xl border border-gray-200">
+                <h2 class="text-2xl font-extrabold text-indigo-700 mb-4 flex items-center">
+                    <span class="text-3xl mr-2">💧</span> Float Test Guide (Floating Score, F)
+                </h2>
+                <img src="https://media.discordapp.net/attachments/1439445774172815494/1439475350727032892/Gemini_Generated_Image_gkubbpgkubbpgkub.png?ex=691aa763&is=691955e3&hm=74987a2ff1700a54979d8f20da0ccd396a464675cb20bd182440f76b30021619" 
+                    alt="Diagram illustrating the egg float test for freshness"
+                    class="w-full rounded-lg mb-4">
+                <p class="text-gray-600 mb-4">
+                    The float test is a simple, visual method to gauge an egg's freshness without cracking it open. It relies on the size of the air cell inside the egg, which expands as the egg ages.
+                </p>
+                <h3 class="font-bold text-lg text-gray-800 mb-2">Steps and Interpretation:</h3>
+                <ul class="list-disc pl-5 space-y-3 text-sm text-gray-700">
+                    <li>
+                        <span class="font-semibold text-green-600">Grade AA (Very Fresh) - F = 0:</span>
+                        Sinks immediately and lies <strong>completely flat</strong> on its side.
+                        <br><span class="text-xs text-gray-500">Explanation: Tiny air cell; egg is dense and stable.</span>
+                    </li>
+                    <li>
+                        <span class="font-semibold text-blue-600">Grade A (Still Fresh) - F = 1:</span>
+                        Sinks but stands <strong>upright or tilted slightly</strong>, with its larger end pointing upwards.
+                        <br><span class="text-xs text-gray-500">Explanation: Small air cell (due to slight moisture loss) at the blunt end causes it to stand up.</span>
+                    </li>
+                    <li>
+                        <span class="font-semibold text-red-600">Grade B (Less Fresh / Older) - F = 2:</span>
+                        The egg will <strong>float</strong> on the surface of the water.
+                        <br><span class="text-xs text-gray-500">Explanation: Significant moisture loss creates a large air cell, providing enough buoyancy to float. Best for baking.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card card-guide w-full p-6 rounded-xl border border-gray-200">
+                <h2 class="text-2xl font-extrabold text-indigo-700 mb-4 flex items-center">
+                    <span class="text-3xl mr-2">🕯️</span> Candling Guide (Candling Score, C)
+                </h2>
+                <p class="text-gray-600 mb-4">
+                    Candling identifies freshness by observing the air cell size, yolk visibility/mobility, and albumen (white) thickness when the egg is held up to a strong light.
+                </p>
+                <img src="https://media.discordapp.net/attachments/1439445774172815494/1439475431974637618/eggcandle-day7_1.webp?ex=691aa777&is=691955f7&hm=b7ada3f1fc1da02ae7e7cbc45e620efdc8e3ced9d6e6720cfc205ea5b9054f5e" 
+                    alt="Diagram showing egg candling results over 7 days"
+                    class="w-full rounded-lg mb-4">
+                <h3 class="font-bold text-lg text-gray-800 mb-2">Candling Interpretation by Age:</h3>
+                <ul class="list-disc pl-5 space-y-3 text-sm text-gray-700">
+                    <li>
+                        <span class="font-semibold text-green-600">🥚 Day 1-2: Very Fresh (Grade AA) - C = 0:</span>
+                        <strong>Air Cell:</strong> Very small (<1/8 inch). <strong>Yolk:</strong> Barely visible, centered, and holds position well. <strong>Albumen:</strong> Thick and firm.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-blue-600">🥚 Day 2-5: Slightly Fresh (Grade A) - C = 1:</span>
+                        <strong>Air Cell:</strong> Slightly enlarged (up to 3/16 inch). <strong>Yolk:</strong> Clearer outline, moves slightly but returns to center. <strong>Albumen:</strong> Still reasonably thick.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-red-600">🥚 Day 6 and Beyond: Less Fresh (Grade B) - C = 2:</span>
+                        <strong>Air Cell:</strong> Large (>3/16 inch). <strong>Yolk:</strong> Clearly visible, flatter, moves <strong>readily</strong> away from the center. <strong>Albumen:</strong> Weak and watery.
+                    </li>
+                </ul>
+                <p class="text-xs italic mt-4 text-gray-500">
+                    <strong>Key Reason:</strong> Loss of moisture enlarges the air cell. Loss of $\text{CO}_2$ thins the albumen, causing the yolk to move freely.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Info Button Toggle Function
+        window.toggleInfo = (id) => {
+            const panel = document.getElementById(id);
+            panel.classList.toggle('hidden');
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultOutput = document.getElementById('resultOutput');
+            const placeholder = document.getElementById('placeholder');
+
+            // --- CONSTANTS FOR THE FORMULA: FI = W – 12.03F – 8.42C ---
+            const CONSTANT_F = 12.03;
+            const CONSTANT_C = 8.42;
+
+            // --- CLASSIFICATION THRESHOLDS ---
+            const THRESHOLD_AA = 51.82;   // FI >= 51.82 is AA
+            const THRESHOLD_A = 30.019;  // 30.019 <= FI < 51.82 is A
+
+            const calculateFreshness = () => {
+                // 1. Get and sanitize input values
+                const weight = parseFloat(document.getElementById('weight').value);
+                // The floatingScore and candlingScore should be integer values 0, 1, or 2
+                const floatingScore = parseInt(document.getElementById('floatingScore').value);
+                const candlingScore = parseInt(document.getElementById('candlingScore').value);
+                
+                // Remove placeholder text
+                if (placeholder) {
+                    placeholder.classList.add('hidden');
+                }
+
+                // 2. Validate inputs
+                if (isNaN(weight) || isNaN(floatingScore) || isNaN(candlingScore)) {
+                    resultOutput.className = 'result-box bg-red-100 border border-red-500 rounded-lg p-4 text-center';
+                    resultOutput.innerHTML = '<p class="text-red-700 font-semibold">Please enter valid numerical values for all fields.</p>';
+                    return;
+                }
+
+                // Enhanced validation for scores (must be 0, 1, or 2)
+                if (floatingScore < 0 || floatingScore > 2 || candlingScore < 0 || candlingScore > 2) {
+                    resultOutput.className = 'result-box bg-red-100 border border-red-500 rounded-lg p-4 text-center';
+                    resultOutput.innerHTML = '<p class="text-red-700 font-semibold">Floating Score and Candling Score must be 0, 1, or 2.</p>';
+                    return;
+                }
+                
+                // 3. Apply the updated formula: FI = W – 12.03F – 8.42C
+                const freshnessIndex = weight - (CONSTANT_F * floatingScore) - (CONSTANT_C * candlingScore);
+                
+                // Round FI to two decimal places for display
+                const fiRounded = freshnessIndex.toFixed(2);
+
+                // 4. Determine the Classification
+                let classification = '';
+                let colorClass = 'text-green-700 bg-green-100'; // Default for AA
+                let gradeName = 'AA (Premium)';
+
+                if (freshnessIndex >= THRESHOLD_AA) {
+                    // FI >= 51.82 (AA)
+                    classification = 'AA';
+                    colorClass = 'text-green-700 bg-green-100';
+                    gradeName = 'AA (Premium)';
+                } else if (freshnessIndex >= THRESHOLD_A) {
+                    // 30.019 <= FI < 51.82 (A)
+                    classification = 'A';
+                    colorClass = 'text-blue-700 bg-blue-100';
+                    gradeName = 'A (Standard)';
+                } else { 
+                    // FI < 30.019 (B)
+                    classification = 'B';
+                    colorClass = 'text-yellow-700 bg-yellow-100';
+                    gradeName = 'B (Reduced)';
+                }
+
+                // 5. Update the result display
+                resultOutput.className = 'result-box rounded-lg p-4 text-center border-2 border-dashed ' + colorClass.replace('text-', 'border-').replace('bg-', '');
+                resultOutput.innerHTML = `
+                    <p class="text-xl font-bold text-gray-800 mb-2">Freshness Index (FI): <span class="text-indigo-600">${fiRounded}</span></p>
+                    <div class="p-3 rounded-md ${colorClass} inline-block mx-auto">
+                        <p class="text-2xl font-extrabold">${classification} Grade</p>
+                    </div>
+                    <p class="text-sm mt-2 text-gray-600">${gradeName}</p>
+                `;
+            };
+
+            // Event Listener
+            calculateBtn.addEventListener('click', calculateFreshness);
+
+            // Optional: Recalculate on Enter press in any input field
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        calculateFreshness();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
